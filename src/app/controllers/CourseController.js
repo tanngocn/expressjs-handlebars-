@@ -18,8 +18,8 @@ function CourseController() {
       const course = new Course(formData);
       course
         .save()
-        .then(() => res.redirect("/"))
-        .catch((error) => {});
+        .then(() => res.redirect("/me/stored/courses"))
+        .catch((error) => { });
     },
     edit: function (req, res, next) {
       Course.findById(req.params.id)
@@ -33,6 +33,24 @@ function CourseController() {
     update: function (req, res, next) {
       Course.updateOne({ _id: req.params.id }, req.body)
         .then(() => res.redirect("/me/stored/courses"))
+        .catch(next);
+    },
+    // sofe delete
+    destroy: function (req, res, next) {
+      Course.delete({ _id: req.params.id })
+        .then(() => res.redirect("back"))
+        .catch(next);
+    },
+    // delete force
+    forceDestroy: function (req, res, next) {
+      Course.deleteOne({ _id: req.params.id })
+        .then(() => res.redirect("back"))
+        .catch(next);
+    },
+
+    restore: function (req, res, next) {
+      Course.restore({ _id: req.params.id })
+        .then(() => res.redirect("back"))
         .catch(next);
     },
   };

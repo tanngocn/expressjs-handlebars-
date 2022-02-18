@@ -1,13 +1,13 @@
 <div class="mt-4">
-  <h2>Danh sách khóa học</h2>
-  <a href="/me/trash/courses">Thùng rác</a>
+  <h2>Danh sách khóa học đã xóa</h2>
+  <a href="/me/stored/courses">Danh sách khóa học</a>
   <table class="table mt-4">
     <thead>
       <tr>
         <th scope="col">STT</th>
         <th scope="col">Tên khóa học</th>
         <th scope="col">Mô tả</th>
-        <th scope="col" colspan="2">Ngày tạo</th>
+        <th scope="col" colspan="3">Ngày tạo</th>
       </tr>
     </thead>
     <tbody>
@@ -17,16 +17,16 @@
         <td>{{this.name}}</td>
         <td>{{this.description}}</td>
         <td>{{this.createdAt}}</td>
-        <td>
-          <a href="/courses/{{this._id}}/edit">Edit</a>
-          <a href="#" data-id="{{this._id}}" data-toggle="modal" data-target="#delete-course-modal">Delete</a>
+        <td colspan="2">
+          <a href="" class="btn btn-restore" data-id="{{this._id}}">Restore</a>
+          <a href="#" data-id="{{this._id}}" data-toggle="modal" data-target="#delete-course-modal">DeleteF</a>
         </td>
       </tr>
       {{else}}
       <tr>
         <td colspan="5" class="text-center">
-          Bạn chưa đăng khóa học nào.
-          <a href="/courses/create">Đăng khóa học</a>
+          Thùng rác trống.
+          <a href="/me/stored/courses">Danh sách khóa học</a>
         </td>
       </tr>
       {{/each}}
@@ -40,13 +40,13 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Delete course?</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Delete courses forever?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Are you sure about that?
+        Your action can't restore, are you sure about that?
       </div>
       <div class="modal-footer">
         <button id="btn-delete-course" type="button" class="btn btn-danger">Delete</button>
@@ -57,12 +57,16 @@
 </div>
 <form method="POST" name="delete-course-form">
 </form>
+<form method="POST" name="restore-course-form">
+</form>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var deleteCourseModal = document.getElementById('delete-course-modal');
     var deleteForm = document.forms['delete-course-form'];
+    var restoreForm = document.forms['restore-course-form'];
     let btnDelete = document.getElementById('btn-delete-course');
+    let btnRestores = $('.btn-restore');
 
     var courseId;
 
@@ -72,8 +76,15 @@
     });
 
     btnDelete.addEventListener('click', function () {
-      deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+      deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
       deleteForm.submit();
+    })
+    btnRestores.click(function (e) {
+      e.preventDefault();
+      var courseId = $(this).data('id');
+      console.log(courseId);
+      restoreForm.action = '/courses/' + courseId + '/restore?_method=PATCH';
+      restoreForm.submit();
     })
 
   }, false)

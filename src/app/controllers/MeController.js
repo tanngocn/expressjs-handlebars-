@@ -11,6 +11,15 @@ function MeController() {
         })
         .catch(next);
     },
+    trashCourses: function (req, res, next) {
+      Course.findDeleted({})
+        .then((courses) => {
+          res.render("me/trash-courses", {
+            courses: muptipleMongooseToObject(courses),
+          });
+        })
+        .catch(next);
+    },
   };
 }
 module.exports = MeController();
